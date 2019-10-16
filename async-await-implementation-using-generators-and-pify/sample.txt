@@ -1,0 +1,72 @@
+Turning a node.js method into a promise with pify
+When making a node.js project, many methods in the node.js core work by giving a callback that will return an error, or what it is that you want from the method. It may be desireable to have these methods return promises instead to be used as a means to work with the method. I could juts do so with the Promise constructor, but pify is a nice little project that can help to make quick work of this.
+
+A basic example of pify
+So normally most node.js methods are used by giving one or more arguments ending with a callback.
+
+like this:
+
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+let fs = require('fs');
+
+fs.readFile('readme.md', function (e, text) {
+
+    // something went wrong
+    if (e) {
+
+        console.log(e);
+
+    } else {
+
+        // the contents of the readme
+        console.log(text.toString());
+
+    }
+
+});
+This can work okay, but can lead to what is called call back hell when making a complex project. Promises can help to keep things neater, and pify can be used as a way to do just that.
+
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+let pify = require('pify'),
+fs = require('fs');
+
+pify(fs.readFile)('readme.md').then(function (text) {
+
+    // the contents of the readme
+    console.log(text.toString());
+
+}).catch (function (e) {
+
+    // something went wrong
+    console.log(e);
+
+});
